@@ -2,6 +2,7 @@
 <link rel="import" href="../vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="day-of-month.html">
 
 <style>
     .month {
@@ -18,37 +19,8 @@
         background-color: #ededed !important;
     }
 
-    .day-of-month {
+    day-of-month {
         width: 100%;
-    }
-
-    .day {
-        font-size: 120%;
-        color: #878787;
-        text-align: right;
-    }
-
-    .events {
-        list-style-position: inside;
-    }
-
-    .events li, .event {
-        padding: 2px 6px;
-        margin: 1px;
-        border-radius: 2px;
-    }
-
-    .event:before {
-        content: '●';
-        margin-right: 6px;
-    }
-
-    .events li.group1, .event[group=group1] {
-        background-color: #779ecb;
-    }
-
-    .events li.group2 {
-        background-color: #afa8dd;
     }
 
     vaadin-grid .vaadin-grid-body tr {
@@ -75,7 +47,7 @@
         <!--<iron-ajax url="data/calendar.json" last-response="{{data}}" auto></iron-ajax>-->
 
         <div class="month">November 2015</div>
-        <vaadin-grid id="grid" selection-mode="disabled">
+        <vaadin-grid id="grid" selection-mode="disabled" items="[[data]]">
             <table>
                 <colgroup>
                     <col header-text="Mon" flex="1">
@@ -86,24 +58,6 @@
                     <col header-text="Sat" flex="1">
                     <col header-text="Sun" flex="1">
                 </colgroup>
-                <tbody>
-                    <template is="dom-repeat" items="[[data]]" as="week">
-                        <tr>
-                            <template is="dom-repeat" items="[[week.days]]" as="item">
-                                <td>
-                                    <div class="day-of-month">
-                                        <div class="day">[[item.day]]</div>
-                                        <iron-selector>
-                                            <template is="dom-repeat" items="[[item.events]]" as="event">
-                                                <div class="event" group$="[[event.group]]" on-click="onClick">[[event.name]]</div>
-                                            </template>
-                                        </iron-selector>
-                                    </div>
-                                </td>
-                            </template>
-                        </tr>
-                    </template>
-                </tbody>
             </table>
         </vaadin-grid>
     </template>
@@ -132,10 +86,17 @@
                     }
                     return 'calendar-cell';
                 };
-            },
 
-            onClick: function(e) {
-                console.log(e);
+                this.$.grid.columns.forEach(function(column) {
+                    column.renderer= function(cell) {
+                        var data = cell.row.data.days[cell.index];
+                        cell.element.innerHTML = '';
+                        var child = document.createElement('day-of-month');
+                        child.setAttribute('day', data.day);
+                        child.events = data.events;
+                        cell.element.appendChild(child);
+                    }
+                });
             }
         });
     });

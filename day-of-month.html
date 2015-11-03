@@ -1,0 +1,78 @@
+<link rel="import" href="../iron-selector/iron-selector.html">
+
+<dom-module id="day-of-month">
+
+    <style>
+        :host {
+            font-family: Roboto, sans-serif
+        }
+
+        .day {
+            font-size: 120%;
+            color: #878787;
+            text-align: right;
+        }
+
+        .events {
+            list-style-position: inside;
+        }
+
+        .events li, .event {
+            padding: 2px 6px;
+            margin: 1px;
+            border-radius: 2px;
+        }
+
+        .event:before {
+            content: '●';
+            margin-right: 6px;
+        }
+
+        .events li.group1, .event[group=group1] {
+            background-color: #779ecb;
+        }
+
+        .events li.group2 {
+            background-color: #afa8dd;
+        }
+
+        /* selection by click doesn't work for some reason */
+        .iron-selected {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+
+    <template>
+        <div class="day">[[day]]</div>
+        <iron-selector>
+            <template is="dom-repeat" items="{{events}}" as="event">
+                <div class="event" group$="[[event.group]]" on-click="onClick">[[event.name]]</div>
+            </template>
+        </iron-selector>
+    </template>
+</dom-module>
+
+<script>
+    HTMLImports.whenReady(function () {
+        Polymer({
+            is: 'day-of-month',
+
+            properties: {
+                day: {
+                    type: Number,
+                    notify: true
+                },
+                events: {
+                    type: Array,
+                    notify: true
+                }
+            },
+
+            onClick: function(e) {
+                console.log(e);
+            }
+        });
+    });
+</script>
