@@ -1,0 +1,142 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+
+<style>
+    .month {
+        font-size: 200%;
+    }
+
+    .calendar-cell {
+        border-right: 1px solid #e3e3e3;
+        align-items: flex-start !important;
+        padding: 5px !important;
+    }
+
+    .weekend {
+        background-color: #ededed !important;
+    }
+
+    .day-of-month {
+        width: 100%;
+    }
+
+    .day {
+        font-size: 120%;
+        color: #878787;
+        text-align: right;
+    }
+
+    .events {
+        list-style-position: inside;
+    }
+
+    .events li, .event {
+        padding: 2px 6px;
+        margin: 1px;
+        border-radius: 2px;
+    }
+
+    .event:before {
+        content: '●';
+        margin-right: 6px;
+    }
+
+    .events li.group1, .event[group=group1] {
+        background-color: #779ecb;
+    }
+
+    .events li.group2 {
+        background-color: #afa8dd;
+    }
+
+    vaadin-grid .vaadin-grid-body tr {
+        height: 150px !important;
+    }
+
+    /* selection by click doesn't work for some reason */
+    .iron-selected {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+
+<dom-module id="vaadin-calendar">
+
+    <style>
+        :host {
+            font-family: Roboto, sans-serif
+        }
+    </style>
+
+    <template>
+        <!--<iron-ajax url="data/calendar.json" last-response="{{data}}" auto></iron-ajax>-->
+
+        <div class="month">November 2015</div>
+        <vaadin-grid id="grid" selection-mode="disabled">
+            <table>
+                <colgroup>
+                    <col header-text="Mon" flex="1">
+                    <col header-text="Tue" flex="1">
+                    <col header-text="Wed" flex="1">
+                    <col header-text="Thu" flex="1">
+                    <col header-text="Fri" flex="1">
+                    <col header-text="Sat" flex="1">
+                    <col header-text="Sun" flex="1">
+                </colgroup>
+                <tbody>
+                    <template is="dom-repeat" items="[[data]]" as="week">
+                        <tr>
+                            <template is="dom-repeat" items="[[week.days]]" as="item">
+                                <td>
+                                    <div class="day-of-month">
+                                        <div class="day">[[item.day]]</div>
+                                        <iron-selector>
+                                            <template is="dom-repeat" items="[[item.events]]" as="event">
+                                                <div class="event" group$="[[event.group]]" on-click="onClick">[[event.name]]</div>
+                                            </template>
+                                        </iron-selector>
+                                    </div>
+                                </td>
+                            </template>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </vaadin-grid>
+    </template>
+</dom-module>
+
+<script>
+    HTMLImports.whenReady(function () {
+        Polymer({
+            is: 'vaadin-calendar',
+
+            properties: {
+                data: {
+                    type: Array,
+                    notify: true
+                }
+            },
+
+            ready: function() {
+                this.$.grid.rowClassGenerator = function (row) {
+                    return 'calendar-row';
+                };
+
+                this.$.grid.cellClassGenerator = function (cell) {
+                    if (cell.index >= 5) {
+                        return 'calendar-cell weekend';
+                    }
+                    return 'calendar-cell';
+                };
+            },
+
+            onClick: function(e) {
+                console.log(e);
+            }
+        });
+    });
+</script>

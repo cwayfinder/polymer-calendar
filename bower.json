@@ -1,0 +1,25 @@
+{
+  "name": "calendar",
+  "authors": [
+    "Taras Hupalo <taras.hupalo@gmail.com>"
+  ],
+  "description": "",
+  "main": "calendar.html",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vaadin-grid": "master",
+    "iron-selector": "PolymerElements/iron-selector#~1.0.8",
+    "iron-ajax": "PolymerElements/iron-ajax#~1.0.8",
+    "DateJS": "datejs#~1.0.0-rc3"
+  }
+}

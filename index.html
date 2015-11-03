@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../DateJS/build/date.js"></script>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="vaadin-calendar.html">
+</head>
+<body>
+
+<vaadin-calendar></vaadin-calendar>
+
+<script>
+    HTMLImports.whenReady(function () {
+        var calendar = document.querySelector('vaadin-calendar');
+
+        calendar.data = (function() {
+            function generateEvent() {
+                var result = {
+                    "name": "test event " + Math.floor(Math.random() * (20 - 1 + 1)) + 1
+                };
+                if ((Math.random() * 2) > 1) {
+                    result.group = 'group1';
+                }
+                return result;
+            }
+
+            function generateDay(date) {
+                var result = {
+                    "day": date,
+                    "events": []
+                };
+                var r = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
+                for(var i = 0; i < r; i++) {
+                    result.events.push(generateEvent());
+                }
+                return result
+            }
+
+            function generateWeek(monday) {
+                var result = {
+                    "days": []
+                };
+                for(var i = 0; i < 7; i++) {
+                    var date = (i).days().after(monday).getDate();
+                    result.days.push(generateDay(date));
+                }
+                return result;
+            }
+
+            function generateMonth(date) {
+                var result = [];
+
+                var first = date.first().monday();
+                if (first.getDate() > 1) {
+                    first = first.prev().monday();
+                }
+
+                for (var i = 0; i < 6; i++) {
+                    var monday = (i).weeks().after(first);
+                    result.push(generateWeek(monday));
+                }
+                return result;
+            }
+
+            return generateMonth(Date.today());
+        })();
+    });
+</script>
+
+</body>
+</html>
