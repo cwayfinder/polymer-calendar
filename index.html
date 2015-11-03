@@ -16,12 +16,30 @@
         var calendar = document.querySelector('vaadin-calendar');
 
         calendar.data = (function() {
-            function generateEvent() {
+            function generateMonth(date) {
+                var result = [];
+
+                var first = date.first().monday();
+                if (first.getDate() > 1) {
+                    first = first.prev().monday();
+                }
+
+                var weeksInMonth = 6;
+                for (var i = 0; i < weeksInMonth; i++) {
+                    var monday = (i).weeks().after(first);
+                    result.push(generateWeek(monday));
+                }
+                return result;
+            }
+
+            function generateWeek(monday) {
                 var result = {
-                    "name": "test event " + Math.floor(Math.random() * (20 - 1 + 1)) + 1
+                    "days": []
                 };
-                if ((Math.random() * 2) > 1) {
-                    result.group = 'group1';
+                var daysInWeek = 7;
+                for(var i = 0; i < daysInWeek; i++) {
+                    var date = (i).days().after(monday).getDate();
+                    result.days.push(generateDay(date));
                 }
                 return result;
             }
@@ -31,37 +49,25 @@
                     "day": date,
                     "events": []
                 };
-                var r = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-                for(var i = 0; i < r; i++) {
+                for(var i = 0; i < randomInt(4); i++) {
                     result.events.push(generateEvent());
                 }
                 return result
             }
 
-            function generateWeek(monday) {
+            function generateEvent() {
                 var result = {
-                    "days": []
+                    "guid": randomInt(10000),
+                    "name": "test event " + randomInt(20)
                 };
-                for(var i = 0; i < 7; i++) {
-                    var date = (i).days().after(monday).getDate();
-                    result.days.push(generateDay(date));
+                if ((Math.random() * 2) > 1) {
+                    result.group = 'group1';
                 }
                 return result;
             }
 
-            function generateMonth(date) {
-                var result = [];
-
-                var first = date.first().monday();
-                if (first.getDate() > 1) {
-                    first = first.prev().monday();
-                }
-
-                for (var i = 0; i < 6; i++) {
-                    var monday = (i).weeks().after(first);
-                    result.push(generateWeek(monday));
-                }
-                return result;
+            function randomInt(max) {
+                return Math.floor(Math.random() * max) + 1;
             }
 
             return generateMonth(Date.today());
